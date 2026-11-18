@@ -95,7 +95,7 @@ Lists only supplies below their minimum, with stock and minimum, or prints
 | ID | Requirement | How |
 |----|-------------|-----|
 | R1 | Display pack size and unit for each item | `pack_size` and `unit` columns; `list` shows both (pack size `0` shown as `no packs`). |
-| R2 | Stock as packs + loose pieces, or amount + unit | `inventory.format_stock`: pack items → `P packs + L <unit>` (`1 pack` singular) from total pieces; others → `<amount> <unit>`. Used by `list`, `low`, `restock`, `use`. |
+| R2 | Stock as packs + loose pieces, or amount + unit | `inventory.format_stock`: pack items → `P packs + L <unit>` (`1 pack` singular) from total pieces; others → `<amount> <unit>`. The unit is singular when its amount is exactly 1 (`1 bottle`, `1 pack + 1 piece`). Used by `list`, `low`, `restock`, `use`. |
 | R3 | Restock by pack | `restock NAME --packs N` → `inventory.restock_packs` adds `N × pack_size`. |
 | R4 | Per-item minimum and low alert | `minimum` column. "Below" means `quantity < minimum`. Shown by `low`, flagged `LOW` in `list`, and warned after `use`. |
 | R5 | `use` subtracts, never below 0 | `inventory.use_supply` raises `InventoryError` if amount > stock; nothing is saved. |

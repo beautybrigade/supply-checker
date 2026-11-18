@@ -99,6 +99,7 @@ They only use temporary copies, so `sample_supplies.csv` is never changed.
 
 ## Known limitations
 
-- Units are printed exactly as written in the CSV, so a quantity of 1 reads
-  as `1 bottles`.
+- Write units in the plural in the CSV (`pieces`, `bottles`). For an amount of
+  exactly 1 the program makes a best-effort singular (`1 bottle`) by dropping
+  the plural ending, so irregular plurals (e.g. `feet`) are printed as written.
 - Adding or removing supplies is done by editing the CSV directly.

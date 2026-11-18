@@ -37,7 +37,7 @@ def test_r2_list_shows_stock_as_packs_or_amount(run_cli, sample_copy):
     assert rows["nail files"][3] == "2 packs + 20 pieces"
     assert rows["nail wipes"][3] == "0 packs + 150 pieces"
     assert rows["acetone"][3] == "1.5 gallons"
-    assert rows["primer"][3] == "1 bottles"
+    assert rows["primer"][3] == "1 bottle"
 
 
 # ---------- R3 ----------
@@ -61,6 +61,12 @@ def test_r3_restock_amount_for_non_pack_item(run_cli, sample_copy):
     assert result.returncode == 0
     assert result.stdout == "Restocked acetone: +2 gallons. Stock: 3.5 gallons.\n"
     assert quantities(sample_copy)["acetone"] == 3.5
+
+
+def test_r3_restock_amount_of_one_uses_singular_unit(run_cli, sample_copy):
+    result = run_cli("--file", sample_copy, "restock", "acetone", "--amount", "1")
+    assert result.returncode == 0
+    assert result.stdout == "Restocked acetone: +1 gallon. Stock: 2.5 gallons.\n"
 
 
 def test_r3_restock_packs_on_non_pack_item_is_error(run_cli, sample_copy):
@@ -93,7 +99,7 @@ def test_r4_low_lists_only_items_below_minimum(run_cli, sample_copy):
     assert result.returncode == 0
     assert result.stdout == ("Below minimum:\n"
                              "  nail wipes: 0 packs + 150 pieces (minimum 200 pieces)\n"
-                             "  primer: 1 bottles (minimum 2 bottles)\n")
+                             "  primer: 1 bottle (minimum 2 bottles)\n")
 
 
 def test_r4_low_when_nothing_is_low(run_cli, make_csv):

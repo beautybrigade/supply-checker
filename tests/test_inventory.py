@@ -52,6 +52,30 @@ def test_r2_non_pack_item_shows_amount_and_unit(quantity, unit, expected):
     assert inv.format_stock(liquid(quantity, unit=unit)) == expected
 
 
+@pytest.mark.parametrize("quantity, unit, expected", [
+    ("1", "bottles", "1 bottle"),
+    ("1", "gallons", "1 gallon"),
+    ("1.0", "ounces", "1 ounce"),
+    ("0", "bottles", "0 bottles"),
+    ("0.5", "gallons", "0.5 gallons"),
+    ("1.5", "gallons", "1.5 gallons"),
+])
+def test_r2_unit_is_singular_only_for_exactly_one(quantity, unit, expected):
+    assert inv.format_stock(liquid(quantity, unit=unit)) == expected
+
+
+def test_r2_one_loose_piece_is_singular():
+    assert inv.format_stock(pack_item(51)) == "1 pack + 1 piece"
+
+
+@pytest.mark.parametrize("unit, expected", [
+    ("pieces", "piece"), ("bottles", "bottle"), ("gallons", "gallon"),
+    ("boxes", "box"), ("batteries", "battery"), ("oz", "oz"), ("glass", "glass"),
+])
+def test_r2_singular_unit(unit, expected):
+    assert inv.singular_unit(unit) == expected
+
+
 def test_r2_sample_file_stock_formatting(sample_copy):
     stock = {s.name: inv.format_stock(s) for s in inv.load_supplies(sample_copy)}
     assert stock["sanding bands"] == "3 packs + 40 pieces"

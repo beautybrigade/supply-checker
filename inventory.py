@@ -184,9 +184,28 @@ def format_pack_size(supply):
     return str(supply.pack_size) if supply.comes_in_packs else "no packs"
 
 
+def singular_unit(unit):
+    """Best-effort singular of a plural unit: 'pieces' -> 'piece',
+    'bottles' -> 'bottle', 'boxes' -> 'box', 'oz' stays 'oz'."""
+    lower = unit.lower()
+    if lower.endswith("ies") and len(unit) > 3:
+        return unit[:-3] + ("Y" if unit[-1].isupper() else "y")
+    if lower.endswith(("ches", "shes", "sses", "xes", "zes")):
+        return unit[:-2]
+    if lower.endswith("s") and not lower.endswith("ss") and len(unit) > 1:
+        return unit[:-1]
+    return unit
+
+
+def unit_for(amount, unit):
+    """The unit as written for any amount except exactly 1, which gets the
+    singular ('1 bottle', but '0 bottles', '1.5 gallons')."""
+    return singular_unit(unit) if amount == 1 else unit
+
+
 def format_amount(supply, amount):
-    """An amount in the supply's unit, e.g. '3 pieces' or '1.5 gallons'."""
-    return f"{format_number(amount)} {supply.unit}"
+    """An amount in the supply's unit, e.g. '3 pieces', '1 piece', '1.5 gallons'."""
+    return f"{format_number(amount)} {unit_for(amount, supply.unit)}"
 
 
 def format_stock(supply):
@@ -195,7 +214,7 @@ def format_stock(supply):
         return format_amount(supply, supply.quantity)
     packs, loose = divmod(int(supply.quantity), supply.pack_size)
     pack_word = "pack" if packs == 1 else "packs"
-    return f"{packs} {pack_word} + {loose} {supply.unit}"
+    return f"{packs} {pack_word} + {loose} {unit_for(loose, supply.unit)}"
 
 
 # ---------- changing stock ----------
